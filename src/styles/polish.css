@@ -36,24 +36,38 @@ button, a, [role="switch"] {
   } 
 }
 
-/* Constrain all bottom sheets to a mobile-like width on desktop */
+/* =========================================
+   DESKTOP BOTTOM SHEET FIXES
+   ========================================= */
 @media (min-width: 768px) {
-  /* Make the dark backdrop behind the sheet completely transparent */
+  /* Remove the dark backdrop so you can see the app behind it */
   [data-radix-portal] > div[data-state="open"] {
     background-color: transparent !important;
   }
 
-  /* Clean up the sheet container (width, positioning, shadow) */
+  /* Center the sheet, push it up, and add internal padding */
   [role="dialog"] {
     max-width: 480px !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    border-top-left-radius: 1.5rem !important;
-    border-top-right-radius: 1.5rem !important;
     left: 0 !important;
     right: 0 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    
+    /* Push it up from the bottom */
+    bottom: 40px !important; 
+    
+    /* Round all corners since it's now floating */
+    border-radius: 24px !important;
+    
+    /* Add internal padding so inputs don't touch edges */
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+
+    /* Add a nice floating shadow */
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     background-color: #F8F5EC !important;
   }
 
