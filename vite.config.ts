@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'prompt',
-      includeAssets: ['favicon.ico', 'apple-touch-icon-180x180.png', 'gawa-logo.png'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon-180x180.png', 'gawa-icon.jpg'],
       manifest: {
         id: '/',
         name: 'GawaBuddy',
@@ -24,9 +24,22 @@ export default defineConfig({
         theme_color: '#0B3D2E',
         background_color: '#0B3D2E',
         icons: [
-          { src: 'gawa-logo.png', sizes: '192x192', type: 'image/png' },
-          { src: 'gawa-logo.png', sizes: '512x512', type: 'image/png' },
-          { src: 'gawa-logo.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { 
+            src: 'gawa-icon.jpg', 
+            sizes: '192x192', 
+            type: 'image/jpeg' 
+          },
+          { 
+            src: 'gawa-icon.jpg', 
+            sizes: '512x512', 
+            type: 'image/jpeg' 
+          },
+          { 
+            src: 'gawa-icon.jpg', 
+            sizes: '512x512', 
+            type: 'image/jpeg', 
+            purpose: 'maskable' 
+          },
         ],
       },
     }),
