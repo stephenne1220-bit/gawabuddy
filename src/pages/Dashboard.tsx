@@ -24,8 +24,8 @@ export default function Dashboard() {
   const recentTxs = useTransactions({ search: '', type: 'all', categoryId: '', accountId: '', from, to }).data?.pages[0]?.slice(0, 5) ?? []
   
   const { data: totals } = useMonthTotals(from, to)
-  const { data: realChartData } = useChartData()
-  const chartData = realChartData ?? []
+  const { data: realChartData, isLoading: chartLoading } = useChartData()
+  const chartData = realChartData && realChartData.length > 0 ? realChartData : []
   
   const accountName = new Map(accounts.map((a) => [a.id, a.name]))
   const categoryById = new Map(categories.map((c) => [c.id, c]))
@@ -91,26 +91,37 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="mt-4 h-56 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#4ADE80" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#4ADE80" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#D4A017" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#D4A017" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#163C35" vertical={false} />
-                  <XAxis dataKey="name" stroke="#9FB5B0" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#9FB5B0" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}k`} />
-                  <Tooltip contentStyle={{ backgroundColor: '#061F1B', border: '1px solid #163C35', borderRadius: '8px' }} itemStyle={{ color: '#F5F8F7' }} />
-                  <Area type="monotone" dataKey="income" stroke="#4ADE80" fillOpacity={1} fill="url(#colorIncome)" strokeWidth={2} />
-                  <Area type="monotone" dataKey="spending" stroke="#D4A017" fillOpacity={1} fill="url(#colorSpending)" strokeWidth={2} />
-                </AreaChart>
-              </ResponsiveContainer>
+              {chartLoading ? (
+                <div className="flex h-full items-center justify-center">
+                  <p className={`text-sm ${textMuted}`}>Loading chart data...</p>
+                </div>
+              ) : chartData.length === 0 || chartData.every((d) => d.income === 0 && d.spending === 0) ? (
+                <div className="flex h-full flex-col items-center justify-center">
+                  <p className={`text-sm font-semibold ${textMain}`}>No data for the last 6 months</p>
+                  <p className={`mt-1 text-xs ${textMuted}`}>Add some transactions to see your chart.</p>
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#4ADE80" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#4ADE80" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#D4A017" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#D4A017" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#163C35" vertical={false} />
+                    <XAxis dataKey="name" stroke="#9FB5B0" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#9FB5B0" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}k`} />
+                    <Tooltip contentStyle={{ backgroundColor: '#061F1B', border: '1px solid #163C35', borderRadius: '8px' }} itemStyle={{ color: '#F5F8F7' }} />
+                    <Area type="monotone" dataKey="income" stroke="#4ADE80" fillOpacity={1} fill="url(#colorIncome)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="spending" stroke="#D4A017" fillOpacity={1} fill="url(#colorSpending)" strokeWidth={2} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
 
