@@ -1,0 +1,143 @@
+import { formatMoney } from '@/lib/money'
+import type { Bar, CatRow } from '@/lib/reportMath'
+
+export type SummaryPdfData = {
+  label: string
+  income: number
+  expense: number
+  rate: number | null
+  bars: Bar[]
+  categories: CatRow[]
+  netWorth: { accounts: number; savings: number; debts: number; total: number } | null
+}
+
+type RGB = [number, number, number]
+const GREEN: RGB = [11, 61, 46]
+const GOLD: RGB = [212, 160, 23]
+const GRAY: RGB = [107, 114, 128]
+const DARK: RGB = [31, 41, 55]
+const CREAM: RGB = [248, 245, 236]
+const RED: RGB = [192, 57, 43]
+const safe = (s: string) => s.replace(/[^\x20-\x7E\u00A0-\u00FF]/g, '')
+const money = (c: number) => safe(formatMoney(c))
+
+export async function downloadSummaryPdf(d: SummaryPdfData, filename: string) {
+  const { jsPDF } = await import('jspdf')
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+  const L = 40
+  const R = 555
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(20)
+  doc.setTextColor(...GREEN)
+  doc.text('Financial summary', L, 60)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(10)
+  doc.setTextColor(...GRAY)
+  doc.text(safe(`${d.label}  |  Generated ${new Date().toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' })}`), L, 78)
+  const net = d.income - d.expense
+  const kpis: { label: string; value: string; color: RGB }[] = [
+    { label: 'Income', value: money(d.income), color: GREEN },
+    { label: 'Expenses', value: money(d.expense), color: DARK },
+    { label: 'Savings rate', value: d.rate === null ? 'n/a' : `${d.rate.toFixed(1)}%  (${money(net)})`, color: d.rate !== null && d.rate < 0 ? RED : GREEN },
+  ]
+  const boxW = (R - L - 20) / 3
+  kpis.forEach((k, i) => {
+    const x = L + i * (boxW + 10)
+    doc.setFillColor(...CREAM)
+    doc.roundedRect(x, 100, boxW, 58, 6, 6, 'F')
+    doc.setFontSize(9)
+    doc.setTextColor(...GRAY)
+    doc.text(k.label, x + 10, 118)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(12)
+    doc.setTextColor(...k.color)
+    doc.text(k.value, x + 10, 140)
+    doc.setFont('helvetica', 'normal')
+  })
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(12)
+  doc.setTextColor(...GREEN)
+  doc.text('Income vs expenses', L, 195)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8)
+  doc.setFillColor(...GREEN)
+  doc.rect(R - 120, 187, 8, 8, 'F')
+  doc.setTextColor(...GRAY)
+  doc.text('Income', R - 108, 194)
+  doc.setFillColor(...GOLD)
+  doc.rect(R - 60, 187, 8, 8, 'F')
+  doc.text('Expenses', R - 48, 194)
+  const base = 335
+  const chartH = 110
+  const max = Math.max(1, ...d.bars.flatMap((b) => [b.income, b.expense]))
+  const gw = (R - L) / d.bars.length
+  d.bars.forEach((b, i) => {
+    const cx = L + i * gw + gw / 2
+    const bw = Math.min(16, gw * 0.32)
+    const ih = (b.income / max) * chartH
+    const eh = (b.expense / max) * chartH
+    doc.setFillColor(...GREEN)
+    doc.rect(cx - bw - 1, base - ih, bw, ih, 'F')
+    doc.setFillColor(...GOLD)
+    doc.rect(cx + 1, base - eh, bw, eh, 'F')
+    doc.setFontSize(7)
+    doc.setTextColor(...GRAY)
+    doc.text(safe(b.label), cx, base + 11, { align: 'center' })
+  })
+  doc.setDrawColor(207, 200, 176)
+  doc.line(L, base, R, base)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(12)
+  doc.setTextColor(...GREEN)
+  doc.text('Where the money went', L, 385)
+  doc.setFont('helvetica', 'normal')
+  if (d.categories.length === 0) {
+    doc.setFontSize(10)
+    doc.setTextColor(...GRAY)
+    doc.text('No expenses recorded for this period.', L, 405)
+  } else {
+    d.categories.slice(0, 9).forEach((c, i) => {
+      const y = 405 + i * 18
+      doc.setFontSize(9)
+      doc.setTextColor(...DARK)
+      doc.text(safe(c.name).slice(0, 28), L, y)
+      doc.setFillColor(233, 228, 212)
+      doc.rect(210, y - 7, 200, 8, 'F')
+      doc.setFillColor(...GOLD)
+      doc.rect(210, y - 7, (c.share / 100) * 200, 8, 'F')
+      doc.text(money(c.total), 500, y, { align: 'right' })
+      doc.setTextColor(...GRAY)
+      doc.text(`${c.share.toFixed(0)}%`, R, y, { align: 'right' })
+    })
+  }
+  if (d.netWorth) {
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(12)
+    doc.setTextColor(...GREEN)
+    doc.text('Net worth today', L, 600)
+    doc.setFont('helvetica', 'normal')
+    const rows: [string, number][] = [
+      ['Accounts', d.netWorth.accounts],
+      ['Savings', d.netWorth.savings],
+      ['Debts', -d.netWorth.debts],
+    ]
+    rows.forEach(([label, v], i) => {
+      const y = 620 + i * 18
+      doc.setFontSize(10)
+      doc.setTextColor(...DARK)
+      doc.text(label, L, y)
+      doc.text(money(v), 300, y, { align: 'right' })
+    })
+    doc.setDrawColor(207, 200, 176)
+    doc.line(L, 672, 300, 672)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(...(d.netWorth.total < 0 ? RED : GREEN))
+    doc.text('Net worth', L, 690)
+    doc.text(money(d.netWorth.total), 300, 690, { align: 'right' })
+    doc.setFont('helvetica', 'normal')
+  }
+  doc.setFontSize(8)
+  doc.setTextColor(...GRAY)
+  doc.text('Generated by Gawa App', L, 800)
+  doc.save(filename)
+}

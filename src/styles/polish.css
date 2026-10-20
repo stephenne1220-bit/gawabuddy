@@ -1,0 +1,65 @@
+.text-\[\#9CA3AF\] { color: #6b7280; } 
+.text-\[\#6B7280\] { color: #5b6573; } 
+.text-\[\#1E8E3E\] { color: #187a37; } 
+[style*="color: rgb(30, 142, 62)"] { color: #187a37 !important; } 
+[style*="color: rgb(107, 114, 128)"] { color: #5b6573 !important; }
+
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [role="switch"]:focus-visible, [tabindex]:focus-visible { 
+  outline: 2px solid #0b3d2e; 
+  outline-offset: 2px; 
+}
+
+.dark a:focus-visible, .dark button:focus-visible, .dark input:focus-visible, .dark select:focus-visible, .dark textarea:focus-visible, .dark [role="switch"]:focus-visible, .dark [tabindex]:focus-visible { 
+  outline-color: #d4a017; 
+}
+
+@media (pointer: coarse) { 
+  input, select, textarea { 
+    font-size: 16px !important; 
+  } 
+}
+
+.rounded-t-3xl[role="dialog"] { 
+  padding-bottom: max(2rem, env(safe-area-inset-bottom)); 
+}
+
+button, a, [role="switch"] { 
+  touch-action: manipulation; 
+}
+
+@media (prefers-reduced-motion: reduce) { 
+  *, *::before, *::after { 
+    animation-duration: 0.01ms !important; 
+    animation-iteration-count: 1 !important; 
+    transition-duration: 0.01ms !important; 
+    scroll-behavior: auto !important; 
+  } 
+}
+
+/* Constrain all bottom sheets to a mobile-like width on desktop */
+@media (min-width: 768px) {
+  /* Make the dark backdrop behind the sheet completely transparent */
+  [data-radix-portal] > div[data-state="open"] {
+    background-color: transparent !important;
+  }
+
+  /* Clean up the sheet container (width, positioning, shadow) */
+  [role="dialog"] {
+    max-width: 480px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border-top-left-radius: 1.5rem !important;
+    border-top-right-radius: 1.5rem !important;
+    left: 0 !important;
+    right: 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+    background-color: #F8F5EC !important;
+  }
+
+  /* Dark mode specific styles */
+  .dark [role="dialog"] {
+    background-color: #14291f !important;
+    border: 1px solid #243b30 !important;
+  }
+}

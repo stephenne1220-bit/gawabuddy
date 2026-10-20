@@ -1,0 +1,31 @@
+.dark { color-scheme: dark; --g-bg: #0c1b16; --g-card: #14291f; --g-soft: #1f362b; --g-track: #2b4539; --g-line: #243b30; --g-line-strong: #3c574a; --g-text: #f1ecdc; --g-text-2: #dad5c3; --g-muted: #a9b8af; --g-faint: #8a9c92; --g-green: #1b6b50; --g-green-text: #8fd3b1; --g-ok: #4cc784; --g-bad: #ff8a7a; --g-warn: #f5b94a; --g-gold-text: #e8c45a; }
+.dark body, .dark #root { background-color: var(--g-bg); color: var(--g-text); }
+.dark .bg-white { background-color: var(--g-card); } 
+.dark .bg-white\/70 { background-color: rgba(20, 41, 31, 0.7); } 
+.dark .bg-\[\#F8F5EC\] { background-color: var(--g-bg); } 
+.dark .bg-\[\#F1ECDC\] { background-color: var(--g-soft); } 
+.dark .bg-\[\#E9E4D4\] { background-color: var(--g-track); } 
+.dark .bg-\[\#0B3D2E\] { background-color: var(--g-green); } 
+.dark .bg-\[\#0B3D2E\]\/5 { background-color: rgba(143, 211, 177, 0.08); } 
+.dark .bg-\[\#0B3D2E\]\/10 { background-color: rgba(143, 211, 177, 0.14); }
+.dark .text-\[\#1F2937\] { color: var(--g-text); } 
+.dark .text-\[\#374151\] { color: var(--g-text-2); } 
+.dark .text-\[\#6B7280\] { color: var(--g-muted); } 
+.dark .text-\[\#9CA3AF\] { color: var(--g-faint); } 
+.dark .text-\[\#0B3D2E\] { color: var(--g-green-text); } 
+.dark .text-\[\#C0392B\] { color: var(--g-bad); } 
+.dark .text-\[\#1E8E3E\] { color: var(--g-ok); } 
+.dark .text-\[\#B45309\] { color: var(--g-warn); } 
+.dark .text-\[\#8A6A00\] { color: var(--g-gold-text); }
+.dark .bg-\[\#D4A017\] { color: #0c1b16 !important; }
+.dark .border-\[\#EFEAD8\] { border-color: var(--g-line); } 
+.dark .border-\[\#CFC8B0\] { border-color: var(--g-line-strong); } 
+.dark .border-\[\#0B3D2E\] { border-color: var(--g-green); } 
+.dark .divide-\[\#F1ECDC\] > :not([hidden]) ~ :not([hidden]) { border-color: var(--g-line); }
+.dark .stroke-\[\#E9E4D4\] { stroke: var(--g-track); }
+.dark [style*="color: rgb(192, 57, 43)"] { color: var(--g-bad) !important; } 
+.dark [style*="color: rgb(30, 142, 62)"] { color: var(--g-ok) !important; } 
+.dark [style*="color: rgb(180, 83, 9)"] { color: var(--g-warn) !important; } 
+.dark [style*="color: rgb(107, 114, 128)"] { color: var(--g-muted) !important; } 
+.dark [style*="color: rgb(31, 41, 55)"] { color: var(--g-text) !important; } 
+.dark [style*="color: rgb(11, 61, 46)"] { color: var(--g-green-text) !important; }
