@@ -1,5 +1,4 @@
-import { LayoutDashboard, Receipt, PieChart, Target, MoreHorizontal, type LucideIcon } from 'lucide-react'
-import { LayoutDashboard, Receipt, PieChart, Target, Compass, CalendarClock, BarChart3, Settings, User, type LucideIcon } from 'lucide-react'
+import { LayoutDashboard, Receipt, PieChart, Target, Compass, CalendarClock, BarChart3, Settings, type LucideIcon } from 'lucide-react'
 
 export type NavItem = { to: string; label: string; icon: LucideIcon; end?: boolean }
 
@@ -12,5 +11,4 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/bills', label: 'Bills', icon: CalendarClock },
   { to: '/reports', label: 'Reports', icon: BarChart3 },
   { to: '/settings', label: 'Settings', icon: Settings },
-  { to: '/profile', label: 'Profile', icon: User },
 ]
