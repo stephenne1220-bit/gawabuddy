@@ -8,6 +8,7 @@ import { useAccounts } from '@/hooks/useAccounts'
 import { useCategories } from '@/hooks/useCategories'
 import { useMonthTotals } from '@/hooks/useDashboard'
 import { useChartData } from '@/hooks/useChartData'
+import { useSavingsGoals } from '@/hooks/useSavings'
 import { currentMonthKey, monthBounds } from '@/lib/budgetMath'
 import { formatMoney } from '@/lib/money'
 import { TransactionRow } from '@/components/transactions/TransactionRow'
@@ -26,8 +27,12 @@ export default function Dashboard() {
   
   const { data: totals } = useMonthTotals(from, to)
   const { data: realChartData, isLoading: chartLoading } = useChartData()
+  const { data: goals } = useSavingsGoals()
   const chartData = realChartData && realChartData.length > 0 ? realChartData : []
   
+  // Calculate Total Savings dynamically from the goals
+  const totalSavings = goals?.reduce((sum, g) => sum + g.saved_cents, 0) ?? 0
+
   const accountName = new Map(accounts.map((a) => [a.id, a.name]))
   const categoryById = new Map(categories.map((c) => [c.id, c]))
 
@@ -55,9 +60,22 @@ export default function Dashboard() {
               <h1 className={`text-2xl font-bold ${textMain}`}>Hello, {first} 👋</h1>
               <p className={`text-sm ${textMuted}`}>Here's a quick look at your money.</p>
             </div>
-            <button className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold ${cardBg} ${textMain}`}>
-              {selectedMonthKey.slice(0, 7)} <ChevronDown size={16} />
-            </button>
+            {/* Quick Add Button */}
+            <div className="flex items-center gap-2">
+              <button className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold ${cardBg} ${textMain}`}>
+                {selectedMonthKey.slice(0, 7)} <ChevronDown size={16} />
+              </button>
+              
+              <button 
+                onClick={() => {
+                  const fab = document.querySelector('[aria-label="Add"]') as HTMLButtonElement;
+                  if (fab) fab.click();
+                }}
+                className="flex items-center gap-2 rounded-xl bg-[#1E8E3E] dark:bg-[#4ADE80] px-4 py-2 text-sm font-bold text-white dark:text-[#031310] shadow-sm hover:opacity-90"
+              >
+                <Plus size={16} /> Add
+              </button>
+            </div>
           </div>
 
           {/* 4 Top Cards */}
@@ -66,7 +84,7 @@ export default function Dashboard() {
               { label: 'Total Income', val: incomeVal, icon: Wallet, color: 'text-[#1E8E3E] dark:text-[#4ADE80]', bg: 'bg-[#1E8E3E]/10 dark:bg-[#4ADE80]/10' },
               { label: 'Total Spent', val: spentVal, icon: PieChart, color: 'text-[#C0392B]', bg: 'bg-[#C0392B]/10' },
               { label: 'Remaining', val: remainingVal, icon: TrendingUp, color: 'text-[#3B82F6]', bg: 'bg-[#3B82F6]/10' },
-              { label: 'Mark Savings', val: 0, icon: Target, color: 'text-[#A855F7]', bg: 'bg-[#A855F7]/10' },
+              { label: 'Total Savings', val: totalSavings, icon: Target, color: 'text-[#A855F7]', bg: 'bg-[#A855F7]/10' },
             ].map((c) => (
               <div key={c.label} className={`rounded-2xl p-4 shadow-sm ${cardBg}`}>
                 <div className="flex items-center justify-between">
@@ -76,7 +94,7 @@ export default function Dashboard() {
                 <p className={`mt-3 text-xs font-medium ${textMuted}`}>{c.label}</p>
                 <p className={`text-lg font-bold ${textMain}`}>{formatMoney(c.val)}</p>
                 <p className={`mt-1 text-xs font-medium ${textMuted}`}>
-                  {c.label === 'Mark Savings' ? 'Set a goal to start saving' : 'This month'}
+                  {c.label === 'Total Savings' ? 'Across all goals' : 'This month'}
                 </p>
               </div>
             ))}
