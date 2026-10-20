@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Receipt, PieChart, Target, MoreHorizontal, LogOut, Settings, X } from 'lucide-react'
+import { LayoutDashboard, Receipt, PieChart, Target, MoreHorizontal, LogOut, Settings, X, User, Compass, CalendarClock, BarChart3 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Avatar } from '@/components/app/Avatar'
 import { useAuth } from '@/context/AuthContext'
@@ -11,8 +11,11 @@ const MENU = [
   { to: '/transactions', label: 'Transactions', icon: Receipt },
   { to: '/budgets', label: 'Budgets', icon: PieChart },
   { to: '/goals', label: 'Savings & Goals', icon: Target },
-  { to: '/more', label: 'More', icon: MoreHorizontal },
+  { to: '/planner', label: 'Financial Planner', icon: Compass },
+  { to: '/bills', label: 'Bills', icon: CalendarClock },
+  { to: '/reports', label: 'Reports', icon: BarChart3 },
   { to: '/settings', label: 'Settings', icon: Settings },
+  { to: '/profile', label: 'Profile', icon: User }, // <--- Added here
 ]
 
 export function TopNav() {
