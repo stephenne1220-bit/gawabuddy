@@ -12,6 +12,7 @@ import { currentMonthKey, monthBounds } from '@/lib/budgetMath'
 import { formatMoney } from '@/lib/money'
 import { TransactionRow } from '@/components/transactions/TransactionRow'
 import { SpendingDonut } from '@/components/dashboard/SpendingDonut'
+import { QuoteCard } from '@/components/dashboard/QuoteCard'
 
 export default function Dashboard() {
   const { data: profile } = useProfile()
@@ -219,6 +220,9 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+
+          {/* Quote Card */}
+          <QuoteCard />
         </div>
       </div>
     </div>
